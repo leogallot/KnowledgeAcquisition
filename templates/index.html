@@ -10,6 +10,18 @@
     <script defer src="static/css/style.css"></script>
 </head>
 <body>
+    <section class="container search">
+        <form action="/" method="POST">
+            <input type="text" name="url" placeholder="URL to analyze" value="{{ data.url }}">
+            <button type="submit">Analyze</button>
+        </form>
+    </section>
+
+    {% if data.display == true %}
+    <section class="container output">
+            {{ data.article }}
+    </section>
+    {% endif %}
 
 </body>
 </html>
