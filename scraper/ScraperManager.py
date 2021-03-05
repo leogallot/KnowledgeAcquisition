@@ -7,7 +7,7 @@ class ScraperManager:
     def __init__(self, url):
         self.article = requests.get(url)
         self.soup = BeautifulSoup(self.article.content, 'html.parser')
-        self.body = self.get_body()
+        self.body = self.get_text()
 
     def get_text(self):
         body = self.soup.find('body')
