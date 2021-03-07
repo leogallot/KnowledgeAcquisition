@@ -11,4 +11,4 @@ class ScraperManager:
 
     def get_text(self):
         body = self.soup.find('body')
-        return [p.text for p in body.findAll('p')]
+        return ''.join([p.text for p in body.findAll('p')])
