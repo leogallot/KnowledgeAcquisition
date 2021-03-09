@@ -10,16 +10,22 @@
     <script defer src="static/js/app.js"></script>
 </head>
 <body>
-    <section class="container search">
-        <form action="/" method="POST">
-            <input type="text" name="url" placeholder="URL to analyze" value="{{ data.url }}">
-            <button type="submit">Analyze</button>
-        </form>
-    </section>
+    <header class="search">
+        <div class="search-container">
+            <form action="/" method="POST">
+                <label for="url">What are your looking for?</label>
+                <input type="text" id="url" name="url" placeholder="URL to analyze" value="{{ data.url }}">
+                <button type="submit">Analyze</button>
+            </form>
+        </div>
+    </header>
 
     {% if data.display == true %}
-    <section class="container output">
-            {{ data.article }}
+    <section class="output-article-text">
+        <header>
+            <h1>Text from the article</h1>
+        </header>
+        <p>{{ data.article }}</p>
     </section>
     {% endif %}
 

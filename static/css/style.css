@@ -1,7 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 * {
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
+}
+body {
+    background-color: #F5F6F8;
 }
 
 /* GENERAL COMPONENTS */
@@ -12,37 +16,64 @@
 
 /* SEARCH */
 .search {
-    background-color: #E6F6FD;
-    margin: 80px auto;
-    border-radius: 4px;
-    padding: 24px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ECEDEF;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.search-container {
+    padding: 24px;
+}
+.search input[type=text]:focus {
+    background-color: #EBF0FF;
 }
 .search input[type=text] {
     width: calc(100% - 16px - 150px);
     padding: 12px 8px;
     font-size: 14px;
     border: 0;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
+    background-color: #F8FAFF;
+    outline: none;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+.search label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
 }
 .search button[type=submit] {
     width: calc(150px);
     padding: 12px 8px;
     font-size: 14px;
-    background-color: #3B3C90;
+    background-color: #4952DD;
     color: #ffffff;
     float: right;
     border: 0;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
-
+    outline: 0;
+}
+.search button[type=submit]:hover,
+.search button[type=submit]:focus {
+    background-color: #3636D3;
+    cursor: pointer;
 }
 
 /* OUTPUT */
-.output {
-    padding: 24px;
-    background-color: #E6F6FD;
-    height: 450px;
-    overflow-y: scroll;
+.output-article-text {
+    background-color: #ffffff;
+    width: calc(50% - 68px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    margin-left: 24px;
+    margin-top: 24px;
+    border: 1px solid #ECEDEF;
+}
+.output-article-text header h1 {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, .25);
+}
+.output-article-text p {
+    padding: 12px;
+    text-align: justify;
+    line-height: 150%;
 }

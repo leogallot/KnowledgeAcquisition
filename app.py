@@ -10,8 +10,10 @@ def home():
     if request.method == 'POST' and request.form.get('url') != '':
         url = request.form.get('url')
         article = ScraperManager(url).get_text()
-        print(disambiguate(article))
-        output = {'display': True, 'article': article, 'url': url}
+
+        images = get_entities_images(disambiguate(article))
+
+        output = {'display': True, 'article': article, 'url': url, 'images': images}
         return render_template('index.html', data=output)
     return render_template('index.html', data={'display': False})
 
