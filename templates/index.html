@@ -29,5 +29,12 @@
     </section>
     {% endif %}
 
+    {% if data.display == true %}
+    <section class="output-article-image">
+        {% for url in data.images %}
+            <img src="{{url}}" alt="">
+        {% endfor %}
+    </section>
+    {% endif %}
 </body>
 </html>
