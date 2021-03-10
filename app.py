@@ -10,7 +10,10 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 def home():
     if request.method == 'POST' and request.form.get('url') != '':
         url = request.form.get('url')
-        text = ScraperManager(url).get_text()
+        text = ScraperManager().get_text_content(url)
+
+        if text is None:
+            return 'Too long'
 
         engine = Engine(text)
         engine.disambiguate()
