@@ -29,12 +29,18 @@
     </section>
     {% endif %}
 
-    {% if data.display == true %}
-    <section class="output-article-image">
-        {% for url in data.images %}
-            <img src="{{url}}" alt="">
-        {% endfor %}
+
+    <section class="slider">
+        <div class="slide">
+            <div class="slide__background" style="background-image: url('http://upload.wikimedia.org/wikipedia/commons/7/72/Buckingham_Palace_from_gardens%2C_London%2C_UK_-_Diliff.jpg')"></div>
+            <div class="slide__image">
+                <img src="http://upload.wikimedia.org/wikipedia/commons/7/72/Buckingham_Palace_from_gardens%2C_London%2C_UK_-_Diliff.jpg" alt="">
+            </div>
+            <div class="slide__legend">
+                <p>Buckingham Palace</p>
+            </div>
+        </div>
     </section>
-    {% endif %}
+    
 </body>
 </html>
