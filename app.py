@@ -16,6 +16,7 @@ def home():
         engine.disambiguate()
         engine.extract_entities_types()
         engine.save_entities_types()
+        engine.find_representative_entities_types()
         engine.extract_entities_images()
 
         output = {'display': True, 'article': text, 'url': url, 'images': engine.get_entities_images()}

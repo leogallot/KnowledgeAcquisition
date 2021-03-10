@@ -1,3 +1,15 @@
 Flask===1.1.2
 beautifulsoup4 === 4.9.3
 requests === 2.25.1
+certifi==2020.12.5
+chardet==4.0.0
+decorator==4.4.2
+dgl==0.4.3
+idna==2.10
+networkx==2.5
+numpy==1.19.0
+requests==2.25.1
+scipy==1.5.4
+torch==1.8.0
+typing-extensions==3.7.4.3
+urllib3==1.26.3

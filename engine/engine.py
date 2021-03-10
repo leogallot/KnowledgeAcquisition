@@ -1,6 +1,6 @@
 import json
 import re
-
+import os
 import requests
 
 
@@ -45,7 +45,6 @@ class Engine:
     def format_entity_type(self, entity_type):
         return entity_type.replace('YAGO_', '<') + '>'
 
-
     def find_top_type(self, entity_type):
         for top_type in self.top_types:
             if self.top_types[top_type]['pattern'] in entity_type:
@@ -72,3 +71,9 @@ class Engine:
         for top_type in self.top_types:
             with open(f'tmp/{top_type}.json', 'w+') as file:
                 json.dump(self.top_types[top_type]['entities'], file)
+
+    def find_representative_entities_types(self):
+        for top_type in self.top_types:
+            command = f'python3 -W ignore PURE/run.py {top_type} ../tmp/{top_type}.json 100 > tmp/pure_{top_type}.txt'
+            os.system(command)
+
