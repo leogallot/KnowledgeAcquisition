@@ -1,52 +1,59 @@
-import requests
-import re
 import json
+import re
+
+import requests
 
 
 class Engine:
-    def __init__(self):
+    def __init__(self, text):
         self.DBPEDIA_API_URL = "https://api.dbpedia-spotlight.org/en/annotate"
         self.AIDA_API_URL = "https://gate.d5.mpi-inf.mpg.de/aida/service/disambiguate"
         self.api = self.AIDA_API_URL
-        self.toptypes = {
-            'wordnet_person_': 'person',
-            'wordnet_organization_': 'organization',
-            'wordnet_event_': 'event',
-            'wordnet_artifact': 'artifact',
-            'yagoGeoEntity': 'yagogeoentity'
+        self.text = text
+        self.api_response = None
+        self.entities_images = None
+        self.top_types = {
+            'person': {'pattern': 'wordnet_person_', 'entities': {}},
+            'organization': {'pattern': 'wordnet_organization_', 'entities': {}},
+            'event': {'pattern': 'wordnet_event_', 'entities': {}},
+            'artifact': {'pattern': 'wordnet_artifact_', 'entities': {}},
+            'yagogeoentity': {'pattern': 'yagoGeoEntity', 'entities': {}}
         }
 
-    def disambiguate(self, text):
-        response = requests.post(self.api, {'text': text})
-        return response.json()
+    def disambiguate(self):
+        response = requests.post(self.api, {'text': self.text})
+        self.api_response = response.json()
 
-    def get_entities_images(self, data):
+    def extract_entities_images(self):
         items = []
         images = []
 
-        for item in data['entityMetadata']:
+        for item in self.api_response['entityMetadata']:
             if re.search('YAGO:', item):
                 items.append(item)
 
         for item in items:
-            url = data['entityMetadata'][item]['depictionurl']
+            url = self.api_response['entityMetadata'][item]['depictionurl']
             if url is not None:
                 images.append(url)
 
-        return images
+        self.entities_images = images
 
-    def format_type(self, entity_type):
+    def get_entities_images(self):
+        return self.entities_images
+
+    def format_entity_type(self, entity_type):
         return entity_type.replace('YAGO_', '<') + '>'
 
-    def get_top_type(self, entity_type):
-        for top_type in self.toptypes:
-            if top_type in entity_type:
-                return self.toptypes[top_type]
+
+    def find_top_type(self, entity_type):
+        for top_type in self.top_types:
+            if self.top_types[top_type]['pattern'] in entity_type:
+                return top_type
         return None
 
-    def get_representative_types(self, data):
-        types = {}
-        entities = data['entityMetadata']
+    def extract_entities_types(self):
+        entities = self.api_response['entityMetadata']
         for value in entities.values():
             # check if value is not empty
             if value:
@@ -54,10 +61,14 @@ class Engine:
                 entity_types = []
                 top_type = None
                 for entity_type in value['type']:
-                    type_formatted = self.format_type(entity_type)
+                    type_formatted = self.format_entity_type(entity_type)
                     entity_types.append(type_formatted)
                     if top_type is None:
-                        top_type = self.get_top_type(type_formatted)
-                types[entity] = {'type': entity_types, 'toptype': top_type}
+                        top_type = self.find_top_type(type_formatted)
+                if top_type in self.top_types:
+                    self.top_types[top_type]['entities'][entity] = entity_types
 
-        return json.dumps(types)
+    def save_entities_types(self):
+        for top_type in self.top_types:
+            with open(f'tmp/{top_type}.json', 'w+') as file:
+                json.dump(self.top_types[top_type]['entities'], file)

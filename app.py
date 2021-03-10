@@ -4,25 +4,21 @@ from engine.engine import Engine
 from scraper.ScraperManager import ScraperManager
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
-engine = Engine()
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST' and request.form.get('url') != '':
         url = request.form.get('url')
+        text = ScraperManager(url).get_text()
 
-        article = ScraperManager(url).get_text()
-        entities_data = engine.disambiguate(article)
+        engine = Engine(text)
+        engine.disambiguate()
+        engine.extract_entities_types()
+        engine.save_entities_types()
+        engine.extract_entities_images()
 
-        types = engine.get_representative_types(entities_data)
-
-        with open('types.json', 'a+') as file:
-            file.write(types + 5 * '\n')
-
-        images = engine.get_entities_images(entities_data)
-
-        output = {'display': True, 'article': article, 'url': url, 'images': images}
+        output = {'display': True, 'article': text, 'url': url, 'images': engine.get_entities_images()}
         return render_template('index.html', data=output)
     return render_template('index.html', data={'display': False})
 
