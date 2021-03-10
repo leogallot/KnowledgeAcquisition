@@ -40,8 +40,6 @@ class Engine:
 
     def get_top_type(self, entity_type):
         for top_type in self.toptypes:
-            print('entity_type: ' + entity_type + ' | top type ' + top_type)
-            print(entity_type in top_type)
             if top_type in entity_type:
                 return self.toptypes[top_type]
         return None
