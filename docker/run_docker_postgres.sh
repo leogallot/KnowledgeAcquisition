@@ -1,0 +1,1 @@
+docker run --name docker-postgres -e POSTGRES_PASSWORD=password -v ~/PycharmProjects/KnowledgeAcquisition/docker/ -d -p 5432:5432 postgres
