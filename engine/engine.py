@@ -2,15 +2,16 @@ import json
 import re
 import os
 import requests
-
+import paramiko
 
 class Engine:
-    def __init__(self, text):
-        self.DBPEDIA_API_URL = "https://api.dbpedia-spotlight.org/en/annotate"
-        self.AIDA_API_URL = "https://gate.d5.mpi-inf.mpg.de/aida/service/disambiguate"
-        self.api = self.AIDA_API_URL
+    def __init__(self, text, username, password, location):
+        self.ssh = paramiko.SSHClient()
+        self.username = username
+        self.password = password
+        self.location = location
+        self.hostname = 'gw.info.unicaen.fr'
         self.text = text
-        self.api_response = None
         self.entities_images = None
         self.top_types = {
             'person': {'pattern': 'wordnet_person_', 'entities': {}},
@@ -19,6 +20,16 @@ class Engine:
             'artifact': {'pattern': 'wordnet_artifact_', 'entities': {}},
             'yagogeoentity': {'pattern': 'yagoGeoEntity', 'entities': {}}
         }
+
+    def execute_AIDA(self):
+        command = f'cd {self.location} && java -cp ".:./bin:./lib/*" mpi.aidalight.rmi.AIDALight_client "{self.text}"'
+        self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.ssh.connect(hostname=self.hostname, username=self.username, password=self.password)
+        stdin, stdout, stderr = self.ssh.exec_command(command)
+        output = stdout.readlines()
+        stdin.flush()
+        self.ssh.close()
+        return output[1:] if len(output) > 1 else None
 
     def disambiguate(self):
         response = requests.post(self.api, {'text': self.text})

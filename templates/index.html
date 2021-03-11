@@ -12,14 +12,36 @@
 <body>
     <header class="search">
         <div class="search-container">
-            <form action="/" method="POST">
+            <form action="/" method="post">
                 <label for="url">What are your looking for?</label>
-                <input type="text" id="url" name="url" placeholder="URL to analyze" value="{{ data.url }}">
-                <button type="submit">Analyze</button>
+                <div class="search-main">
+                    <input type="text" id="url" name="url" placeholder="URL to analyze" value="{{ data.url }}">
+                    <a href="#" class="search-options-btn" id="search-options-btn"><i class="icon-up" id="search-options-icon"></i></a>
+                    <button type="submit">Analyze</button>
+                </div>
+
+                <div class="search-options">
+                    <div class="search-options__item">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Username">
+                    </div>
+                    <div class="search-options__item">
+                        <label for="hostname">Hostname</label>
+                        <input type="text" id="hostname" name="hostname" placeholder="Hostname" value="gw.info.unicaen.fr" disabled>
+                    </div>
+                    <div class="search-options__item">
+                         <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password">
+                    </div>
+                    <div class="search-options__item">
+                         <label for="location">Location of AIDA</label>
+                        <input type="text" id="location" name="location" placeholder="Location of AIDA" value="~/AIDA/">
+                    </div>
+                </div>
             </form>
         </div>
     </header>
-    <div class="loader"><div class="loader__indeterminate"></div></div>
+    <div class="loader" style="display: none"><div class="loader__indeterminate"></div></div>
 
     {% if data.display == true %}
     <section class="output-article-text">

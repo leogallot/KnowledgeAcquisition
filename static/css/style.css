@@ -13,6 +13,21 @@ body {
     width: 70%;
     margin: auto;
 }
+input[type=text]:focus,
+input[type=url]:focus,
+input[type=password]:focus {
+    background-color: #EBF0FF;
+}
+input[type=text],
+input[type=password] {
+    padding: 12px 8px;
+    font-size: 14px;
+    border: 0;
+    background-color: #F8FAFF;
+    outline: none;
+    border-bottom-left-radius: 4px;
+}
+
 
 /* SEARCH */
 .search {
@@ -23,26 +38,46 @@ body {
 .search-container {
     padding: 24px;
 }
-.search input[type=text]:focus {
-    background-color: #EBF0FF;
+.search-main {
+    display: flex;
 }
 .search input[type=text] {
-    width: calc(100% - 16px - 150px);
-    padding: 12px 8px;
-    font-size: 14px;
-    border: 0;
-    background-color: #F8FAFF;
-    outline: none;
-    border-bottom-left-radius: 4px;
-    border-top-left-radius: 4px;
+    width: 100%;
 }
 .search label {
     font-weight: 600;
     font-size: 13px;
     margin-bottom: 4px;
 }
+.search-options-btn {
+    width: 50px;
+    background-color: #ffffff;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    margin: 0 12px;
+    position: relative;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+.search-options-btn:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); }
+.icon-up,
+.icon-down {
+    width: 22px;
+    height: 16px;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.icon-up {
+    background-image: url("../img/icon-up.png");
+}
+.icon-down {
+    background-image: url("../img/icon-down.png");
+}
 .search button[type=submit] {
-    width: calc(150px);
+    width: 150px;
     padding: 12px 8px;
     font-size: 14px;
     background-color: #4952DD;
@@ -57,6 +92,25 @@ body {
 .search button[type=submit]:focus {
     background-color: #3636D3;
     cursor: pointer;
+}
+
+/* SEARCH OPTIONS */
+.search-options {
+    display: flex;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.search-options__item {
+    flex: 1;
+    min-width: 250px;
+}
+.search-options label {
+    display: block;
+}
+.search-options__item input[type=password],
+.search-options input[type=text] {
+    width: calc(100% - 24px);
 }
 
 /* LOADER */
