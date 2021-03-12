@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 
 from engine.engine import Engine
+from engine.database import Database
 from scraper.ScraperManager import ScraperManager
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -40,7 +41,6 @@ def home():
         output = {'display': True, 'article': text, 'url': url, 'images': engine.get_entities_images()}
         return render_template('index.html', data=output)
         '''
-        print(temp)
         return 'OK'
     return render_template('index.html', data={'display': False})
 
