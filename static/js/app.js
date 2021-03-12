@@ -1,11 +1,19 @@
 const SEARCH_OPTIONS_BTN = document.getElementById('search-options-btn');
 const SEARCH_OPTIONS_ICON = document.getElementById('search-options-icon');
 const SEARCH_OPTIONS_CONTAINER = document.getElementsByClassName('search-options')[0];
+
 const LOADER = document.getElementsByClassName('loader')[0];
 const FORM = document.getElementById('form');
 const SUBMIT_BTN = document.getElementById('submit_btn');
+
+const DIALOG = document.getElementsByClassName('dialog-bg')[0];
+const DIALOG_TITLE = document.getElementById('dialog-title');
+const DIALOG_CONTENT = document.getElementById('dialog-content');
+const EXIT_DIALOG_BTN = document.getElementById('exit-dialog');
+
 let search_options_visible = true;
 
+// Manage search options display
 SEARCH_OPTIONS_BTN.addEventListener('click', ev => {
     if (search_options_visible) {
         SEARCH_OPTIONS_CONTAINER.style.display = 'none';
@@ -21,6 +29,12 @@ SEARCH_OPTIONS_BTN.addEventListener('click', ev => {
     }
 });
 
+// Exit dialog window
+EXIT_DIALOG_BTN.addEventListener('click', ev => {
+    DIALOG.style.display = 'none';
+});
+
+// Process form
 FORM.addEventListener('submit', ev => {
     ev.preventDefault();
     SUBMIT_BTN.disabled = true;
@@ -49,3 +63,10 @@ FORM.addEventListener('submit', ev => {
         });
 
 });
+
+// Show dialog window
+function showDialogWindow(title, content) {
+    DIALOG.style.display = 'block';
+    DIALOG_TITLE.innerText = title;
+    DIALOG_CONTENT.innerText = content;
+}
