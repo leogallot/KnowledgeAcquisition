@@ -26,8 +26,9 @@ def launch_engine():
             return json.dumps({'send': False, 'error': 'scrap'})
 
         engine = Engine(text=text, username=username, password=password, location=location)
-        if engine.run():
-            return json.dumps({'send': True, 'success': True})
+        data = engine.run()
+        if data is not None:
+            return json.dumps({'send': True, 'success': True, 'text': data.get('text'), 'pure': data.get('pure')})
 
         return json.dumps({'send': True, 'success': False})
 

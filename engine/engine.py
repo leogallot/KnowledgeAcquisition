@@ -15,7 +15,6 @@ class Engine:
         self.location = location
         self.hostname = 'gw.info.unicaen.fr'
         self.text = text
-        self.entities_images = None
         self.entities = []
         self.top_types = {
             'person': {'pattern': 'wordnet_person_', 'entities': {}},
@@ -44,10 +43,13 @@ class Engine:
             print('-- EXECUTING PURE')
             self.execute_PURE()
 
-            print('-- END')
-            return True
+            print('-- GET PURE OUTPUT')
+            pure = self.read_pure_files()
 
-        return False
+            print('-- END')
+            return {'text': self.text, 'pure': pure}
+
+        return None
 
     # Execute AIDA on distant server
     def execute_AIDA(self):
@@ -105,6 +107,23 @@ class Engine:
         for top_type in self.top_types:
             command = f'python3 -W ignore PURE/run.py {top_type} ../tmp/{top_type}.json 100 > tmp/pure_{top_type}.txt'
             os.system(command)
+
+    # Read PURE files
+    def read_pure_files(self):
+        content = []
+        counter = 0
+        for top_type in self.top_types:
+            file = open(f'tmp/pure_{top_type}.txt', 'r')
+            lines = file.readlines()
+            content.append({'top': top_type, 'content': []})
+            for line in lines[1:]:
+                temp = line.split('>')  # split line type : <wordnet_XXXX_YYYY>ZZ.ZZ where ZZ.ZZ is PURE result
+                wordnet = temp[0]+'>'
+                score = float(temp[1])
+                if score > 0:
+                    content[counter]['content'].append({'wordnet': wordnet, 'score': score})
+            counter += 1
+        return content
 
     # Get top type of entity
     def find_top_type(self, entity_type):
