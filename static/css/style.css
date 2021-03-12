@@ -93,6 +93,10 @@ input[type=password] {
     background-color: #3636D3;
     cursor: pointer;
 }
+.search button[type=submit]:disabled {
+    opacity: 0.5;
+    cursor: progress;
+}
 
 /* SEARCH OPTIONS */
 .search-options {

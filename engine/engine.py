@@ -17,13 +17,6 @@ class Engine:
         self.text = text
         self.entities_images = None
         self.entities = []
-        self.pattern_top_types = {
-            'person': '<wordnet_person_',
-            'organization': '<wordnet_organization_',
-            'event': '<wordnet_event_',
-            'artifact': '<wordnet_artifact_',
-            'yagogeoentity': '<yagoGeoEntity>'
-        }
         self.top_types = {
             'person': {'pattern': 'wordnet_person_', 'entities': {}},
             'organization': {'pattern': 'wordnet_organization_', 'entities': {}},
@@ -31,6 +24,30 @@ class Engine:
             'artifact': {'pattern': 'wordnet_artifact_', 'entities': {}},
             'yagogeoentity': {'pattern': 'yagoGeoEntity', 'entities': {}}
         }
+
+    # Run engine
+    def run(self):
+        print('-- EXECUTING AIDA (SSH SERVER)')
+        aida_output = self.execute_AIDA()
+
+        if aida_output is not None:
+            print('-- CLEANING AIDA OUTPUT')
+            self.clean_output_AIDA(aida_output)
+
+            print('-- FINDING ENTITIES IN YAGO DATABASE')
+            self.execute_YAGO()
+
+            print('-- CLEANING DATA TO USE PURE FRAMEWORK')
+            self.prepare_top_type_PURE()
+            self.save_entities_types()
+
+            print('-- EXECUTING PURE')
+            self.execute_PURE()
+
+            print('-- END')
+            return True
+
+        return False
 
     # Execute AIDA on distant server
     def execute_AIDA(self):
@@ -41,10 +58,6 @@ class Engine:
         output = stdout.readlines()
         stdin.flush()
         self.ssh.close()
-        self.clean_output_AIDA(output[1:])
-        self.execute_YAGO()
-
-        print(self.entities)
 
         return output[1:] if len(output) > 1 else None
 
@@ -56,7 +69,7 @@ class Engine:
             entity = output_split[1].split('/')  # split the wikipedia URL
             entity = f'<{entity[len(entity) - 1][:-1]}>'  # get the end of URL
             if entity != '<--NME-->':
-                if not any(ent['word'] == word for ent in self.entities):   # check there isn't same word
+                if not any(ent['word'] == word for ent in self.entities):  # check there isn't same word
                     self.entities.append({'word': word, 'entity': entity})
 
     # Get YAGO from database
@@ -68,72 +81,34 @@ class Engine:
                 if re.match('<wordnet_', temporary_result[i][0]) or re.match('<yagoGeoEntity>', temporary_result[i][0]):
                     self.entities[index]['yago'].append(temporary_result[i][0])
 
-    # Prepare data for PURE framework
-    def prepare_PURE(self):
+    # Prepare top type for PURE framework
+    def prepare_top_type_PURE(self):
         for index in range(0, len(self.entities)):
             top_type = None
+            self.entities[index]['top-type'] = ''  # add to entities the top type (maybe not utils)
             for yago_type in self.entities[index]['yago']:
                 if top_type is None:
-                    top_type = self.find_top_type(yago_type)
-                    # not terminated
+                    top_type = self.find_top_type(yago_type)  # find top type
+            if top_type is not None and top_type in self.top_types:
+                # add to top_types the entity
+                self.top_types[top_type]['entities'][self.entities[index]['word']] = self.entities[index]['yago']
+            self.entities[index]['top-type'] = top_type
 
-    # Execute PURE framework
-    def execute_PURE(self):
-        pass
-
-    def disambiguate(self):
-        response = requests.post(self.api, {'text': self.text})
-        self.api_response = response.json()
-
-    def extract_entities_images(self):
-        items = []
-        images = []
-
-        for item in self.api_response['entityMetadata']:
-            if re.search('YAGO:', item):
-                items.append(item)
-
-        for item in items:
-            url = self.api_response['entityMetadata'][item]['depictionurl']
-            if url is not None:
-                images.append(url)
-
-        self.entities_images = images
-
-    def get_entities_images(self):
-        return self.entities_images
-
-    def format_entity_type(self, entity_type):
-        return entity_type.replace('YAGO_', '<') + '>'
-
-    def find_top_type(self, entity_type):
-        for top_type in self.top_types:
-            if self.top_types[top_type]['pattern'] in entity_type:
-                return top_type
-        return None
-
-    def extract_entities_types(self):
-        entities = self.api_response['entityMetadata']
-        for value in entities.values():
-            # check if value is not empty
-            if value:
-                entity = f'<{value["entityId"].lower()}>'
-                entity_types = []
-                top_type = None
-                for entity_type in value['type']:
-                    type_formatted = self.format_entity_type(entity_type)
-                    entity_types.append(type_formatted)
-                    if top_type is None:
-                        top_type = self.find_top_type(type_formatted)
-                if top_type in self.top_types:
-                    self.top_types[top_type]['entities'][entity] = entity_types
-
+    # Save entities in files
     def save_entities_types(self):
         for top_type in self.top_types:
             with open(f'tmp/{top_type}.json', 'w+') as file:
                 json.dump(self.top_types[top_type]['entities'], file)
 
-    def find_representative_entities_types(self):
+    # Execute PURE framework
+    def execute_PURE(self):
         for top_type in self.top_types:
             command = f'python3 -W ignore PURE/run.py {top_type} ../tmp/{top_type}.json 100 > tmp/pure_{top_type}.txt'
             os.system(command)
+
+    # Get top type of entity
+    def find_top_type(self, entity_type):
+        for top_type in self.top_types:
+            if self.top_types[top_type]['pattern'] in entity_type:
+                return top_type
+        return None

@@ -12,12 +12,12 @@
 <body>
     <header class="search">
         <div class="search-container">
-            <form action="/" method="post">
+            <form action="/endpoint/" method="post" id="form">
                 <label for="url">What are your looking for?</label>
                 <div class="search-main">
                     <input type="text" id="url" name="url" placeholder="URL to analyze" value="{{ data.url }}">
                     <a href="#" class="search-options-btn" id="search-options-btn"><i class="icon-up" id="search-options-icon"></i></a>
-                    <button type="submit">Analyze</button>
+                    <button type="submit" id="submit_btn">Analyze</button>
                 </div>
 
                 <div class="search-options">
