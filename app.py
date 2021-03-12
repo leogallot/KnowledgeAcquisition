@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
 from engine.engine import Engine
-from engine.database import Database
 from scraper.ScraperManager import ScraperManager
 import json
 
