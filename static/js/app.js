@@ -57,9 +57,9 @@ FORM.addEventListener('submit', ev => {
     })
         .then(response => response.json())
         .then(response => {
-            console.log(response);
             LOADER.style.display = 'none';
             SUBMIT_BTN.disabled = false;
+            processErrorData(response);
         });
 
 });
@@ -69,4 +69,17 @@ function showDialogWindow(title, content) {
     DIALOG.style.display = 'block';
     DIALOG_TITLE.innerText = title;
     DIALOG_CONTENT.innerText = content;
+}
+
+// Process data from /endpoint/
+function processErrorData(data) {
+    if (data.send === false) {
+        if (data.error === 'scrap')
+            showDialogWindow('Ouups ...', 'Our scrapper can\'t scrap this website. Try with another website to use this tool.');
+    }
+    else {
+        if (data.success === false) {
+            showDialogWindow('Ouups ...', 'The engine can\'t run. Check if AIDA location and login are corrects.');
+        }
+    }
 }

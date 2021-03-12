@@ -24,7 +24,7 @@ def launch_engine():
 
         # if the scrap is too long
         if text is None:
-            return json.dumps({'send': False, 'error': 'Impossible to scrap this website'})
+            return json.dumps({'send': False, 'error': 'scrap'})
 
         engine = Engine(text=text, username=username, password=password, location=location)
         if engine.run():
@@ -32,7 +32,7 @@ def launch_engine():
 
         return json.dumps({'send': True, 'success': False})
 
-    return json.dumps({'send': False})
+    return json.dumps({'send': False, 'error': 'error'})
 
 
 def check_request(data):
