@@ -148,12 +148,12 @@ function drawChart(data) {
     table.addColumn('string', 'score')
 
     let tableData  = [
-        ['entity', '', ''],
-        ['person', 'entity', ''],
-        ['organization', 'entity', ''],
-        ['event', 'entity', ''],
-        ['artifact', 'entity', ''],
-        ['yagogeoentity', 'entity', '']
+        ['toptype', '', ''],
+        ['person', 'toptype', ''],
+        ['organization', 'toptype', ''],
+        ['event', 'toptype', ''],
+        ['artifact', 'toptype', ''],
+        ['yagogeoentity', 'toptype', '']
     ];
 
     tableData = addDataChart(tableData, data);
