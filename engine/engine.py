@@ -111,8 +111,7 @@ class Engine:
     # Read PURE files
     def read_pure_files(self):
         content = []
-        counter = 0
-        for top_type in self.top_types:
+        for index, top_type in enumerate(self.top_types):
             file = open(f'tmp/pure_{top_type}.txt', 'r')
             lines = file.readlines()
             content.append({'top': top_type, 'content': []})
@@ -121,8 +120,9 @@ class Engine:
                 wordnet = temp[0]+'>'
                 score = float(temp[1])
                 if score > 0:
-                    content[counter]['content'].append({'wordnet': wordnet, 'score': score})
-            counter += 1
+                    for entity in self.top_types[top_type]['entities']:
+                        if any(wordnet in entity_type for entity_type in self.top_types[top_type]['entities'][entity]):
+                            content[index]['content'].append({'entity': entity, 'wordnet': wordnet, 'score': round(score, 2)})
         return content
 
     # Get top type of entity
