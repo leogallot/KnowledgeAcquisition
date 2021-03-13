@@ -12,5 +12,7 @@ class Database:
         self.cursor = self.connect.cursor()
 
     def execute(self, entity):
-        self.cursor.execute("SELECT object FROM yagofacts WHERE subject = '" + entity + "';")
+        SQL = "SELECT object FROM yagofacts WHERE subject = (%s);"
+        data = (entity,)
+        self.cursor.execute(SQL, data)
         return self.cursor.fetchall()
