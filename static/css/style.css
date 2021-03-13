@@ -277,13 +277,51 @@ input[type=password] {
 }
 .text p {
     text-align: justify;
+    color: rgba(0, 0, 0, .65);
 }
 .text p a {
     color: #4C4CD8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ENTITIES */
+.entities {
+    margin: 24px;
+    padding: 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #ECEDEF;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.entities-container {
+    opacity: .5;
+}
+.entities-container:hover {
+    opacity: 1;
+}
+.entities-container h3 {
+    margin-bottom: 8px;
+    color: rgba(0, 0, 0, .70);
+}
+.entities-container p {
+    margin-bottom: 12px;
+}
+.entities-container p i {
+    font-style: normal;
+    padding: 4px 12px;
+    font-size: 12px;
+    background: rgb(76,76,216);
+    background: linear-gradient(0deg, rgba(76,76,216,1) 0%, rgba(121,121,226,1) 100%);
+    border-radius: 4px;
+    margin: 8px 8px 8px 0;
+    color: #ffffff;
+    display: inline-block;
 }
 
 /* TABS */
 .tab-relations,
-.tab-text {
+.tab-text,
+.tab-entities{
     display: none;
 }

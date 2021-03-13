@@ -15,7 +15,7 @@ class Engine:
         self.location = location
         self.hostname = 'gw.info.unicaen.fr'
         self.text = text
-        self.entities = []
+        self.entities = []  # contains {'word'}
         self.top_types = {
             'person': {'pattern': 'wordnet_person_', 'entities': {}},
             'organization': {'pattern': 'wordnet_organization_', 'entities': {}},
@@ -23,7 +23,7 @@ class Engine:
             'artifact': {'pattern': 'wordnet_artifact_', 'entities': {}},
             'yagogeoentity': {'pattern': 'yagoGeoEntity', 'entities': {}}
         }
-        self.wikipedia = [] # contains {'word': str, 'wikipedia_id': str}
+        self.wikipedia = []  # contains {'word': str, 'wikipedia_id': str}
 
     # Run engine
     def run(self):
@@ -51,7 +51,7 @@ class Engine:
             text = self.process_text_wikipedia()
 
             print('-- END')
-            return {'text': text, 'pure': pure}
+            return {'text': text, 'pure': pure, 'yago': self.entities}
 
         return None
 
@@ -116,27 +116,38 @@ class Engine:
 
     # Read PURE files
     def read_pure_files(self):
-        content = []
+        output = []
         for index, top_type in enumerate(self.top_types):
             file = open(f'tmp/pure_{top_type}.txt', 'r')
             lines = file.readlines()
-            content.append({'top': top_type, 'content': []})
+            output.append({'top': top_type, 'content': {}})
             for line in lines[1:]:
-                temp = line.split('>')  # split line type : <wordnet_XXXX_YYYY>ZZ.ZZ where ZZ.ZZ is PURE result
-                wordnet = temp[0]+'>'
+                temp = line.split('>')  # split line type : <wordnet_XXXX_YYYY>ZZ.ZZ where ZZ.ZZ is PURE score
+                wordnet = temp[0] + '>'
                 score = float(temp[1])
                 if score > 0:
                     for entity in self.top_types[top_type]['entities']:
                         if any(wordnet in entity_type for entity_type in self.top_types[top_type]['entities'][entity]):
-                            content[index]['content'].append({'entity': entity, 'wordnet': wordnet, 'score': round(score, 2)})
-        return content
+                            new_entry = {'word': entity, 'score': round(score, 2)}
+                            if len(output[index]['content']) == 0:
+                                # init the dict
+                                output[index]['content'] = {wordnet: [new_entry]}
+                            elif wordnet in output[index]['content'].keys():
+                                # add new entity of wordnet (without occurrences)
+                                if new_entry not in output[index]['content'][wordnet]:
+                                    output[index]['content'][wordnet].append(new_entry)
+                            else:
+                                # create new key in dict
+                                output[index]['content'][wordnet] = [new_entry]
+        return output
 
+    # Process text with wikipedia link
     def process_text_wikipedia(self):
         text_clean = []
-        text_split = self.text.split(' ') # split text with space
+        text_split = self.text.split(' ')  # split text with space
         for word in text_split:
             if any(wiki['word'] == word for wiki in self.wikipedia):
-                if self.get_wikipedia_link(word) is not None:   # if the link is right
+                if self.get_wikipedia_link(word) is not None:  # if the link is right
                     text_clean.append({'mark': True, 'word': word, 'link': self.get_wikipedia_link(word)})
                 else:
                     text_clean.append({'mark': False, 'word': word})

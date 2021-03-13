@@ -18,6 +18,8 @@ const TAB_RELATIONS = document.getElementsByClassName('tab-relations')[0];
 const BTN_TAB_RELATIONS = document.getElementById('tab-relations-btn');
 const TAB_TEXT = document.getElementsByClassName('tab-text')[0];
 const BTN_TAB_TEXT = document.getElementById('tab-text-btn');
+const TAB_ENTITIES = document.getElementsByClassName('tab-entities')[0];
+const BTN_TAB_ENTITIES = document.getElementById('tab-entities-btn');
 
 const TEXT_CONTAINER = document.getElementById('text');
 
@@ -94,6 +96,14 @@ BTN_TAB_RELATIONS.addEventListener('click', ev => {
     }
 });
 
+// Manage button tab:entities
+BTN_TAB_ENTITIES.addEventListener('click', ev => {
+    ev.preventDefault();
+    if (user.current_tab !== TAB_ENTITIES) {
+        switchBtnTab(BTN_TAB_ENTITIES, TAB_ENTITIES);
+    }
+});
+
 // Switch tabs
 function switchBtnTab(new_btn, new_tab) {
     user.current_tab_btn.classList.remove('active');
@@ -136,6 +146,7 @@ function processOutput(data) {
     user.current_tab.style.display = 'block';
 
     processText(data['text']);
+    processEntities(data['yago']);
     google.charts.setOnLoadCallback(drawChart(data['pure']));
 }
 
@@ -145,15 +156,14 @@ function drawChart(data) {
 
     table.addColumn('string', 'name')
     table.addColumn('string', 'manager')
-    table.addColumn('string', 'score')
 
     let tableData  = [
-        ['toptype', '', ''],
-        ['person', 'toptype', ''],
-        ['organization', 'toptype', ''],
-        ['event', 'toptype', ''],
-        ['artifact', 'toptype', ''],
-        ['yagogeoentity', 'toptype', '']
+        ['toptype', ''],
+        ['person', 'toptype'],
+        ['organization', 'toptype'],
+        ['event', 'toptype'],
+        ['artifact', 'toptype'],
+        ['yagogeoentity', 'toptype']
     ];
 
     tableData = addDataChart(tableData, data);
@@ -165,8 +175,23 @@ function drawChart(data) {
 // Add data to graph
 function addDataChart(array, data) {
     data.forEach(item => {
-        for(let i = 0; i < item.content.length; i++) {
-            array.push([item.content[i].wordnet, item.top, item.content[i].score.toString()]);
+        let top = item.top;
+        let wordnet = Object.keys(item.content);
+
+        // loop for each wordnet
+        for (let index = 0; index < wordnet.length; index++) {
+            let current = wordnet[index];
+
+            array.push([current, top]);
+
+            // loop for each word:score
+            for (let i = 0; i < item.content[current].length; i++) {
+                let id_word = item.content[current][i]['word']+'_'+current+'_';
+                let id_score = id_word+'_'+item.content[current][i]['score']+'_'+i;
+
+                array.push([{'v': id_score, 'f': item.content[current][i]['score'].toString()}, current]);
+                array.push([{v: id_word, f: item.content[current][i]['word']},  id_score]);
+            }
         }
     });
     return array;
@@ -174,6 +199,7 @@ function addDataChart(array, data) {
 
 // Process text
 function processText(text) {
+    cleanText();
     text.forEach(item => {
         if (item.mark) {
             let temp_link = document.createElement('a');
@@ -188,7 +214,29 @@ function processText(text) {
     });
 }
 
+// Process entities
+function processEntities(data) {
+    console.log(data);
+    const CONTAINER = document.getElementsByClassName('entities')[0];
+    for (let index = 0; index < data.length; index++) {
+        const DIV = document.createElement('div');
+        DIV.classList.add('entities-container')
+        const TITLE = document.createElement('h3');
+        const CONTENT = document.createElement('p');
 
-document.getElementById('username').value = '21708475';
-document.getElementById('password').value = '3D95H85';
-document.getElementById('location').value = '~/aida/aidalight-backup/';
+        TITLE.innerText = data[index]['word'];
+        for (let yago_index = 0; yago_index < data[index]['yago'].length; yago_index++) {
+            let li = document.createElement('i');
+            li.innerText = data[index]['yago'][yago_index];
+            CONTENT.appendChild(li);
+        }
+        DIV.appendChild(TITLE);
+        DIV.appendChild(CONTENT);
+        CONTAINER.appendChild(DIV);
+    }
+}
+
+// Clean text area
+function cleanText() {
+    TEXT_CONTAINER.innerHTML = '';
+}
