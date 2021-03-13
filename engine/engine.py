@@ -136,7 +136,7 @@ class Engine:
         text_split = self.text.split(' ') # split text with space
         for word in text_split:
             if any(wiki['word'] == word for wiki in self.wikipedia):
-                if self.get_wikipedia_link(word): # if the link is right
+                if self.get_wikipedia_link(word) is not None:   # if the link is right
                     text_clean.append({'mark': True, 'word': word, 'link': self.get_wikipedia_link(word)})
                 else:
                     text_clean.append({'mark': False, 'word': word})
