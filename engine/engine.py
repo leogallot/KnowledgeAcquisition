@@ -15,7 +15,7 @@ class Engine:
         self.location = location
         self.hostname = 'gw.info.unicaen.fr'
         self.text = text
-        self.entities = []  # contains {'word'}
+        self.entities = []
         self.top_types = {
             'person': {'pattern': 'wordnet_person_', 'entities': {}},
             'organization': {'pattern': 'wordnet_organization_', 'entities': {}},
