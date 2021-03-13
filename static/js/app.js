@@ -187,3 +187,8 @@ function processText(text) {
         }
     });
 }
+
+
+document.getElementById('username').value = '21708475';
+document.getElementById('password').value = '3D95H85';
+document.getElementById('location').value = '~/aida/aidalight-backup/';

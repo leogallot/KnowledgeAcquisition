@@ -136,7 +136,10 @@ class Engine:
         text_split = self.text.split(' ') # split text with space
         for word in text_split:
             if any(wiki['word'] == word for wiki in self.wikipedia):
-                text_clean.append({'mark': True, 'word': word, 'link': self.get_wikipedia_link(word)})
+                if self.get_wikipedia_link(word): # if the link is right
+                    text_clean.append({'mark': True, 'word': word, 'link': self.get_wikipedia_link(word)})
+                else:
+                    text_clean.append({'mark': False, 'word': word})
             else:
                 text_clean.append({'mark': False, 'word': word})
         return text_clean
@@ -147,7 +150,10 @@ class Engine:
         # get the good wikipedia ID
         for item in self.wikipedia:
             if item['word'] == word:
-                wikipedia_img = item['wikipedia_id']
+                if item['wikipedia_id'] != 'http://en.wikipedia.org/wiki/--NME--':
+                    wikipedia_img = item['wikipedia_id']
+                else:
+                    wikipedia_img = None
                 break
         return wikipedia_img
 
