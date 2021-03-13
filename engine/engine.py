@@ -42,16 +42,16 @@ class Engine:
             self.save_entities_types()
 
             print('-- EXECUTING PURE')
-            # self.execute_PURE()
+            self.execute_PURE()
 
             print('-- GET PURE OUTPUT')
-            # pure = self.read_pure_files()
+            pure = self.read_pure_files()
 
             print('-- CREATE WIKIPEDIA ITEMS')
             text = self.process_text_wikipedia()
 
             print('-- END')
-            return {'text': text, 'pure': 'pure'}
+            return {'text': text, 'pure': pure}
 
         return None
 
