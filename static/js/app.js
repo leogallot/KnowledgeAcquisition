@@ -22,6 +22,7 @@ const TAB_ENTITIES = document.getElementsByClassName('tab-entities')[0];
 const BTN_TAB_ENTITIES = document.getElementById('tab-entities-btn');
 
 const TEXT_CONTAINER = document.getElementById('text');
+const ENTITIES_CONTAINER = document.querySelector('.entities');
 
 let user = {
     search_options_visible: true,
@@ -216,8 +217,6 @@ function processText(text) {
 
 // Process entities
 function processEntities(data) {
-    console.log(data);
-    const CONTAINER = document.getElementsByClassName('entities')[0];
     for (let index = 0; index < data.length; index++) {
         const DIV = document.createElement('div');
         DIV.classList.add('entities-container')
@@ -232,11 +231,12 @@ function processEntities(data) {
         }
         DIV.appendChild(TITLE);
         DIV.appendChild(CONTENT);
-        CONTAINER.appendChild(DIV);
+        ENTITIES_CONTAINER.appendChild(DIV);
     }
 }
 
 // Clean text area
 function cleanText() {
     TEXT_CONTAINER.innerHTML = '';
+    ENTITIES_CONTAINER.innerHTML = '';
 }
