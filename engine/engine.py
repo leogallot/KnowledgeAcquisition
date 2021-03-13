@@ -1,7 +1,7 @@
 import json
 import re
 import os
-import requests
+import hashlib
 import paramiko
 from engine.database import Database
 
@@ -23,6 +23,7 @@ class Engine:
             'artifact': {'pattern': 'wordnet_artifact_', 'entities': {}},
             'yagogeoentity': {'pattern': 'yagoGeoEntity', 'entities': {}}
         }
+        self.wikipedia = [] # contains {'word': str, 'wikipedia_id': str}
 
     # Run engine
     def run(self):
@@ -41,13 +42,16 @@ class Engine:
             self.save_entities_types()
 
             print('-- EXECUTING PURE')
-            self.execute_PURE()
+            # self.execute_PURE()
 
             print('-- GET PURE OUTPUT')
-            pure = self.read_pure_files()
+            # pure = self.read_pure_files()
+
+            print('-- CREATE WIKIPEDIA ITEMS')
+            text = self.process_text_wikipedia()
 
             print('-- END')
-            return {'text': self.text, 'pure': pure}
+            return {'text': text, 'pure': 'pure'}
 
         return None
 
@@ -69,7 +73,9 @@ class Engine:
             output_split = output_aida[index].split('\t')  # split the output (\t)
             word = output_split[0]  # get the name of entity
             entity = output_split[1].split('/')  # split the wikipedia URL
-            entity = f'<{entity[len(entity) - 1][:-1]}>'  # get the end of URL
+            entity = entity[len(entity) - 1][:-1]
+            self.wikipedia.append({'word': word, 'wikipedia_id': output_split[1][:-1]})
+            entity = f'<{entity}>'  # get the end of URL
             if entity != '<--NME-->':
                 if not any(ent['word'] == word for ent in self.entities):  # check there isn't same word
                     self.entities.append({'word': word, 'entity': entity})
@@ -124,6 +130,26 @@ class Engine:
                         if any(wordnet in entity_type for entity_type in self.top_types[top_type]['entities'][entity]):
                             content[index]['content'].append({'entity': entity, 'wordnet': wordnet, 'score': round(score, 2)})
         return content
+
+    def process_text_wikipedia(self):
+        text_clean = []
+        text_split = self.text.split(' ') # split text with space
+        for word in text_split:
+            if any(wiki['word'] == word for wiki in self.wikipedia):
+                text_clean.append({'mark': True, 'word': word, 'link': self.get_wikipedia_link(word)})
+            else:
+                text_clean.append({'mark': False, 'word': word})
+        return text_clean
+
+    # Get wikipedia link
+    def get_wikipedia_link(self, word):
+        wikipedia_img = ''
+        # get the good wikipedia ID
+        for item in self.wikipedia:
+            if item['word'] == word:
+                wikipedia_img = item['wikipedia_id']
+                break
+        return wikipedia_img
 
     # Get top type of entity
     def find_top_type(self, entity_type):

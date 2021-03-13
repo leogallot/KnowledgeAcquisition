@@ -134,6 +134,9 @@ input[type=password] {
     text-transform: uppercase;
     font-weight: 600;
 }
+.nav a:hover {
+    color: rgba(0, 0, 0, .50);
+}
 .nav a.active {
     border-bottom: 3px solid #4C4CD8;
 }
@@ -274,6 +277,9 @@ input[type=password] {
 }
 .text p {
     text-align: justify;
+}
+.text p a {
+    color: #4C4CD8;
 }
 
 /* TABS */

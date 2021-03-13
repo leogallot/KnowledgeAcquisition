@@ -23,7 +23,6 @@ const TEXT_CONTAINER = document.getElementById('text');
 
 let user = {
     search_options_visible: true,
-    tab_visible: false,
     current_tab: TAB_TEXT,
     current_tab_btn: BTN_TAB_TEXT
 }
@@ -133,16 +132,15 @@ function processData(data) {
 
 // Process result
 function processOutput(data) {
-    TEXT_CONTAINER.innerText = data['text']; // display text
     TAB.style.display = 'block';
-    TAB_TEXT.style.display = 'block';
+    user.current_tab.style.display = 'block';
 
+    processText(data['text']);
     google.charts.setOnLoadCallback(drawChart(data['pure']));
 }
 
 // Draw relation graph
 function drawChart(data) {
-    TAB_RELATIONS.style.display = 'block';
     let table = new google.visualization.DataTable();
 
     table.addColumn('string', 'name')
@@ -172,4 +170,20 @@ function addDataChart(array, data) {
         }
     });
     return array;
+}
+
+// Process text
+function processText(text) {
+    text.forEach(item => {
+        if (item.mark) {
+            let temp_link = document.createElement('a');
+            temp_link.href = item.link;
+            temp_link.innerHTML = item.word;
+            temp_link.target = '_blank';
+            TEXT_CONTAINER.appendChild(temp_link);
+            TEXT_CONTAINER.innerHTML = TEXT_CONTAINER.innerHTML + ' '; // add space
+        } else {
+            TEXT_CONTAINER.innerHTML = TEXT_CONTAINER.innerHTML + item.word + ' ';
+        }
+    });
 }
