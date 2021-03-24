@@ -4,7 +4,7 @@
 ---
 
  1. Install the aidalight source code on your university session (http://download.mpi-inf.mpg.de/d5/aida/aidalight.zip)
- 2. Replace the content of the AIDALight_client.java file located in the directory src/mpi/aidalight/rmi/ by this code :  
+ 2. Replace the content of the AIDALight_client.java file located in the directory **src/mpi/aidalight/rmi/** by this code :  
 ```java
 package mpi.aidalight.rmi;
 
