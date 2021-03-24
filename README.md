@@ -58,9 +58,16 @@ public class AIDALight_client {
 ```
 3.  Recompile the aidalight source code by running this command at the root of the directory :  
 `javac ./src/mpi/aidalight/rmi/AIDALight_client.java -cp ".:./bin:./lib/*" -d "./bin/"`
+4. On your computer, download the PURE project and put it at the root of the current directory.
+5. Edit run.py and add the following lines at the top of the file : 
+``` 
+    import sys
+    import os
+    os.chdir(os.getcwd() + '/PURE')
+```
 
-4. On your computer, follow the instructions of the file docker/README.txt 
-5. Create a python virtual environment by running `python3 -m venv venv`
-6. Install the python packages `pip install -r requirements.txt`
-7. Run the flask application `flask run`
+6. Follow the instructions of the file docker/README.txt 
+7. Create a python virtual environment by running `python3 -m venv venv`
+8. Install the python packages `pip install -r requirements.txt`
+9. Run the flask application `flask run`
 
